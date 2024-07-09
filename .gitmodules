@@ -1,0 +1,3 @@
+[submodule "slambook-en"]
+	path = slambook-en
+	url = git@github.com:gaoxiang12/slambook-en.git
