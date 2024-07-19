@@ -2,6 +2,10 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 
 class Transform:
+    """
+        - rotation: A scipy rotation object
+        - translation: A 3x1 numpy array
+    """
     def __init__(self, rotation, translation):
         self.R = rotation
         self.t = translation
@@ -13,12 +17,15 @@ class Transform:
     Apply this transformation to a vector `v`
     """
     def __mul__(self, v):
-        assert v.shape == (3,)
-        x = np.identity(4)
-        x[:3, 3] = v
+        assert v.shape == (3,) or v.shape == (4,)
 
-        res = self.__as_matrix__() @ x
-        return res[:3, 3]
+        if v.shape == (3,):
+            x = np.identity(4)
+            x[:3, 3] = v
+            res = self.__as_matrix__() @ x
+            return res[:3, 3]
+        else:
+            return self.__as_matrix__() @ v
 
     """
         - rotation: scipy.Rotation
@@ -48,6 +55,9 @@ class Transform:
         T = t @ self.__as_matrix__()
         self.__update_iso__(T)
         return self
+
+    def inv(self):
+        return np.linalg.inv(self.__as_matrix__())
 
 
     def __as_matrix__(self) -> np.array:
